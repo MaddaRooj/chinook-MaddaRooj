@@ -52,6 +52,7 @@ OR Year(InvoiceDate) = '2011';
 -- total_sales_{year}.sql: What are the respective total sales for each of those years?
 
 
+
 -- invoice_37_line_item_count.sql: Looking at the InvoiceLine table, provide a query that COUNTs the number of line items for Invoice ID 37.
 
 SELECT COUNT(InvoiceLineId) AS LineItemsForID37 
@@ -118,6 +119,7 @@ ORDER BY e.EmployeeId
 
 -- top_2009_agent.sql: Which sales agent made the most in sales in 2009?
 
+
 SELECT e.EmployeeId, COUNT(i.InvoiceId) AS TotalInvoices
 FROM Invoice i
 LEFT JOIN Customer c ON c.CustomerId = i.CustomerId
@@ -128,11 +130,32 @@ ORDER BY TotalInvoices DESC
 
 -- top_agent.sql: Which sales agent made the most in sales over all?
 
+SELECT e.FirstName AS SalesAgentFN, e.LastName AS SalesAgentLN, SUM(i.Total) AS TotalSales
+FROM Invoice i 
+LEFT JOIN Customer c ON c.CustomerId = i.CustomerId
+LEFT JOIN Employee e ON e.EmployeeId = c.SupportRepId
+GROUP BY e.FirstName, e.LastName
+ORDER BY TotalSales DESC
+
 -- sales_agent_customer_count.sql: Provide a query that shows the count of customers assigned to each sales agent.
+
+SELECT e.FirstName AS SalesAgentFN, e.LastName AS SalesAgentLN, COUNT(c.CustomerId) AS #OfCustomers
+FROM Customer c 
+LEFT JOIN Employee e ON c.SupportRepId = e.EmployeeId
+GROUP BY e.FirstName, e.LastName 
 
 -- sales_per_country.sql: Provide a query that shows the total sales per country.
 
+SELECT COUNT(i.InvoiceId) AS #OfSales, i.BillingCountry
+FROM Invoice i 
+GROUP BY i.BillingCountry
+
 -- top_country.sql: Which country's customers spent the most?
+
+SELECT SUM(Total) AS TotalSpent, BillingCountry 
+FROM Invoice
+GROUP BY BillingCountry
+ORDER BY TotalSpent DESC
 
 -- top_2013_track.sql: Provide a query that shows the most purchased track of 2013.
 
