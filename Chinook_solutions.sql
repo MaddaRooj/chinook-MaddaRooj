@@ -128,6 +128,8 @@ WHERE YEAR(i.InvoiceDate) = '2009'
 GROUP BY e.EmployeeId
 ORDER BY TotalInvoices DESC
 
+-- Hint: Use the MAX function on a subquery.
+
 -- top_agent.sql: Which sales agent made the most in sales over all?
 
 SELECT e.FirstName AS SalesAgentFN, e.LastName AS SalesAgentLN, SUM(i.Total) AS TotalSales
@@ -159,8 +161,40 @@ ORDER BY TotalSpent DESC
 
 -- top_2013_track.sql: Provide a query that shows the most purchased track of 2013.
 
+SELECT COUNT(il.TrackId) AS UnitsSold, t.TrackId, t.[Name] AS TrackName 
+FROM InvoiceLine il
+LEFT JOIN Track t ON il.TrackId = t.TrackId
+LEFT JOIN Invoice i ON il.InvoiceId = i.InvoiceId
+GROUP BY t.TrackId, t.[Name]
+ORDER BY UnitsSold DESC
+
+
 -- top_5_tracks.sql: Provide a query that shows the top 5 most purchased songs.
+
+SELECT TOP 5 COUNT(il.TrackId) AS UnitsSold, t.TrackId, t.[Name] AS TrackName 
+FROM InvoiceLine il
+LEFT JOIN Track t ON il.TrackId = t.TrackId
+LEFT JOIN Invoice i ON il.InvoiceId = i.InvoiceId
+GROUP BY t.TrackId, t.[Name]
+ORDER BY UnitsSold DESC
 
 -- top_3_artists.sql: Provide a query that shows the top 3 best selling artists.
 
+SELECT TOP 3 COUNT(al.ArtistId) AS UnitsSoldByArtist, a.ArtistId, a.[Name] AS TrackName 
+FROM InvoiceLine il
+LEFT JOIN Track t ON il.TrackId = t.TrackId
+LEFT JOIN Invoice i ON il.InvoiceId = i.InvoiceId
+LEFT JOIN Album al ON al.AlbumId = t.AlbumId
+LEFT JOIN Artist a ON a.ArtistId = al.ArtistId
+GROUP BY a.ArtistId, a.[Name]
+ORDER BY UnitsSoldByArtist DESC
+
 -- top_media_type.sql: Provide a query that shows the most purchased Media Type.
+
+SELECT TOP 3 COUNT(mt.MediaTypeId) AS UnitsSoldByMediaType, mt.MediaTypeId, mt.[Name] AS MediaType 
+FROM InvoiceLine il
+LEFT JOIN Track t ON il.TrackId = t.TrackId
+LEFT JOIN Invoice i ON il.InvoiceId = i.InvoiceId
+LEFT JOIN MediaType mt ON t.MediaTypeId = mt.MediaTypeId
+GROUP BY mt.MediaTypeId, mt.[Name]
+ORDER BY UnitsSoldByMediaType DESC
